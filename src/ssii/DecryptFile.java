@@ -59,15 +59,15 @@ KeyStore keyStore = KeyStore.getInstance("PKCS12");
         }
         
         
-        return "Decrypted!";
+        return "Descifrado";
 }
     
 	 public static void main(String[] args) throws Exception {
 
-		 String iv = "0123456789ABCDEF"; // vector de inicialización
-		 
+	 
 		 String rutaClaro = JOptionPane.showInputDialog(null, "Introduzca la ruta absoluta del fichero que quiere descifrar (incluyendo el nombre del mismo):");
 		 String rutaCifrado = JOptionPane.showInputDialog(null, "Introduzca la ruta absoluta donde quiere guardar el nuevo fichero (incluyendo el nombre del mismo):");
+		 String iv = JOptionPane.showInputDialog(null, "Introduzca el vector de inicialización:");
 		 String ksruta = JOptionPane.showInputDialog(null, "Introduzca la ruta absoluta donde se encuentra el almacén de claves (incluyendo el nombre del mismo):");
 		 String kspass = JOptionPane.showInputDialog(null, "Introduzca la contraseña del almacén de claves:");
 		 

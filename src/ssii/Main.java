@@ -6,17 +6,17 @@ import java.util.Random;
 public class Main {
 	 
 	 public static void main(String[] args) throws Exception {
-	 String key = "92AE31A79FEEB2A3"; //llave
-	 String iv = "0123456789ABCDEF"; // vector de inicialización
-
+		 String key = generateRandomString(16); //llave
+		 //String iv = generateRandomString(16); // vector de inicialización
+		 String iv = "E7939V9L8MK1PA8P"; //Vector de inicialización (descifrar)
 	 
 	 //ENCRIPTAR ARCHIVO
-	 //System.out.println("Texto encriptado: "+ EncryptUtils.encrypt(key, iv, "C:\\Users\\juan1\\Desktop\\UMLNuevo.pdf", "C:\\Users\\juan1\\Desktop\\uml.txt"));
+	 //System.out.println(EncryptUtils.encrypt(key, iv, "C:\\Users\\juan1\\Desktop\\aaaa.txt", "C:\\Users\\juan1\\Desktop\\1.txt", "C:\\Users\\juan1\\Desktop\\newkeystore.ks", "1234"));
 	 
 	 
 	 
 	 //DESENCRIPTAR ARCHIVO
-	 //System.out.println("Texto desencriptado: "+EncryptUtils.decrypt(key, iv, "C:\\Users\\juan1\\Desktop\\uml.txt", "C:\\Users\\juan1\\Desktop\\UMLNuevo.pdf", "C:\\Users\\juan1\\Desktop\\almacen.txt"));
+	//System.out.println(EncryptUtils.decrypt(iv, "C:\\Users\\juan1\\Desktop\\1.txt", "C:\\Users\\juan1\\Desktop\\u.txt", "C:\\Users\\juan1\\Desktop\\newkeystore.ks", "1234"));
 	 
 	 
 	 
@@ -26,9 +26,12 @@ public class Main {
 	 
 	 
 	 //RandomString r = new RandomString (16);
-	 System.out.println(generateRandomString(16));
+	 //System.out.println(generateRandomString(16));
 	 }
 
+	 
+	 
+	 //Clase auxiliar para generar números aleatorios
 	 public static String generateRandomString(int length) {
 		 String symbols = "ABCDEFGJKLMNPRSTUVWXYZ0123456789"; 
 

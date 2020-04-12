@@ -74,14 +74,14 @@ KeyStore keyStore = KeyStore.getInstance("PKCS12");
         
         File file = new File(rutaClaro);
         file.delete();
-        return "Encrypted";
+        return "Cifrado, por favor, guarde el vector de inicialización generado. Puede verlo en la consola.";
 }
 
 	
 	 public static void main(String[] args) throws Exception {
 
 		 String key = generateRandomString(16); //llave
-		 String iv = "0123456789ABCDEF"; // vector de inicialización
+		 String iv = generateRandomString(16); // vector de inicialización
 		 
 		 String rutaClaro = JOptionPane.showInputDialog(null, "Introduzca la ruta absoluta del fichero que quiere cifrar (incluyendo el nombre del mismo):");
 		 String rutaCifrado = JOptionPane.showInputDialog(null, "Introduzca la ruta absoluta donde quiere guardar el nuevo fichero (incluyendo el nombre del mismo):");
@@ -91,6 +91,8 @@ KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		 String result = encrypt(key, iv, rutaClaro, rutaCifrado, ksruta, kspass);
 		 
 		 JOptionPane.showMessageDialog(null, result);
+		 
+		 System.out.println("IV: " + iv);
 		 
 }
 

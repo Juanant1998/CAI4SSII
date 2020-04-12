@@ -22,109 +22,109 @@ public class EncryptUtils {
 
 	private final static String alg = "AES";
     private final static String cI = "AES/CBC/PKCS5Padding";
-	private final static String ivks = "0123456789ABCDEF"; // vector de inicialización
 
-	public static String encrypt(String key, String iv, String rutaClaro, String nuevaRuta) throws Exception {
-        
+	public static String encrypt(String key, String iv, String rutaClaro, String nuevaRuta, String ksruta, String kspass) throws Exception {
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
-		
-		char[] keyStorePassword = "123abc".toCharArray();
+				
+				char[] keyStorePassword = kspass.toCharArray();
 
-		keyStore.load(null, keyStorePassword);
-		
-		KeyStore.ProtectionParameter entryPassword =
-		        new KeyStore.PasswordProtection(keyStorePassword);
-		
-		
-		SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), alg);
+				keyStore.load(null, keyStorePassword);
+				
+				KeyStore.ProtectionParameter entryPassword =
+				        new KeyStore.PasswordProtection(keyStorePassword);
+				
+				
+				SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), alg);
 
-		
-		KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(skeySpec);
+				
+				KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(skeySpec);
 
-		
-		keyStore.setEntry(nuevaRuta, secretKeyEntry, entryPassword);
-		
-		try (FileOutputStream keyStoreOutputStream = new FileOutputStream("C:\\Users\\juan1\\Desktop\\keystore.ks")) {
+				
+				keyStore.setEntry(nuevaRuta, secretKeyEntry, entryPassword);
+				
+				try (FileOutputStream keyStoreOutputStream = new FileOutputStream(ksruta)) {
 
-		    keyStore.store(keyStoreOutputStream, keyStorePassword);
+				    keyStore.store(keyStoreOutputStream, keyStorePassword);
+				}
+				
+				
+				
+				
+				
+				
+				Cipher cipher = Cipher.getInstance(cI);
+		        //SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), alg);
+				IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes());
+
+		        cipher.init(Cipher.ENCRYPT_MODE, skeySpec,ivParameterSpec);
+		        FileInputStream fis = new FileInputStream(rutaClaro);
+		        FileOutputStream fos = new FileOutputStream(nuevaRuta);
+		        CipherOutputStream cos = new CipherOutputStream(fos, cipher);
+		        byte[] block = new byte[1024];
+		        int i;
+		        try {
+		            while ((i = fis.read(block)) != -1) {
+		                cos.write(block, 0, i);
+		            }
+		            fis.close();
+
+		        } catch (Exception e) {
+		            throw new IOException(e);
+		        } finally {
+		            cos.close();
+		        }
+		        
+		        File file = new File(rutaClaro);
+		        file.delete();
+		        
+		        System.out.println(iv);
+		        return "Cifrado, por favor, guarde el vector de inicialización generado. Puede verlo en la consola.";
 		}
-		
-		
-		
-		
-		
-		
-		Cipher cipher = Cipher.getInstance(cI);
-        //SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), alg);
-		IvParameterSpec ivParameterSpec = new IvParameterSpec(ivks.getBytes());
-
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec,ivParameterSpec);
-        FileInputStream fis = new FileInputStream(rutaClaro);
-        FileOutputStream fos = new FileOutputStream(nuevaRuta);
-        CipherOutputStream cos = new CipherOutputStream(fos, cipher);
-        byte[] block = new byte[1024];
-        int i;
-        try {
-            while ((i = fis.read(block)) != -1) {
-                cos.write(block, 0, i);
-            }
-            fis.close();
-
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            cos.close();
-        }
-        
-        File file = new File(rutaClaro);
-        file.delete();
-        return "Encrypted!";
-}
 	
-	public static String decrypt(String KSkey, String KSiv, String rutaEncriptado, String nuevaRuta, String rutaAlmacen) throws Exception {
+	public static String decrypt(String iv, String rutaEncriptado, String nuevaRuta, String ksruta, String kspass) throws Exception {
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
-		
-		char[] keyStorePassword = "123abc".toCharArray();
+				
+				char[] keyStorePassword = kspass.toCharArray();
 
-		try(InputStream keyStoreData = new FileInputStream("C:\\Users\\juan1\\Desktop\\keystore.ks")){
-		    keyStore.load(keyStoreData, keyStorePassword);
-		}		
-		KeyStore.ProtectionParameter entryPassword =
-        new KeyStore.PasswordProtection(keyStorePassword);
-		
-		KeyStore.SecretKeyEntry privateKeyEntry = (KeyStore.SecretKeyEntry)
-		        keyStore.getEntry("C:\\Users\\juan1\\Desktop\\uml.txt", entryPassword);
-		
-		Thread.sleep(200);
-		
-		
-		Cipher cipher = Cipher.getInstance(cI);
+				try(InputStream keyStoreData = new FileInputStream(ksruta)){
+				    keyStore.load(keyStoreData, keyStorePassword);
+				}		
+				KeyStore.ProtectionParameter entryPassword =
+		        new KeyStore.PasswordProtection(keyStorePassword);
+				
+				KeyStore.SecretKeyEntry privateKeyEntry = (KeyStore.SecretKeyEntry)
+				        keyStore.getEntry(rutaEncriptado, entryPassword);
+				
+				Thread.sleep(200);
+				
+				
+				Cipher cipher = Cipher.getInstance(cI);
 
-		IvParameterSpec ivParameterSpec = new IvParameterSpec(ivks.getBytes());
-        cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getSecretKey(), ivParameterSpec);
+				IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes());
+		        cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getSecretKey(), ivParameterSpec);
 
-        FileInputStream fis = new FileInputStream(rutaEncriptado);
-        FileOutputStream fos = new FileOutputStream(nuevaRuta);
-        CipherOutputStream cos = new CipherOutputStream(fos, cipher);
-        byte[] block = new byte[1024];
-        int i;
-        try {
-            while ((i = fis.read(block)) != -1) {
-                cos.write(block, 0, i);
-            }
-            fis.close();
+		        FileInputStream fis = new FileInputStream(rutaEncriptado);
+		        FileOutputStream fos = new FileOutputStream(nuevaRuta);
+		        CipherOutputStream cos = new CipherOutputStream(fos, cipher);
+		        byte[] block = new byte[1024];
+		        int i;
+		        try {
+		            while ((i = fis.read(block)) != -1) {
+		                cos.write(block, 0, i);
+		            }
+		            fis.close();
 
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            cos.close();
-        }
-        
-        
-        return "Decrypted!";
-}
+		        } catch (Exception e) {
+		            throw new IOException(e);
+		        } finally {
+		            cos.close();
+		        }
+		        
+		        
+		        return "Descifrado";
+		}
 	
 	public static void generateKeystoreFile(String ruta, String pass) {
 		KeyStore keyStore;
